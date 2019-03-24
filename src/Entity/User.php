@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
-class User
+class User implements \JsonSerializable
 {
     /**
      * @ORM\Id()
@@ -19,12 +19,12 @@ class User
     /**
      * @ORM\Column(type="integer")
      */
-    private $role_id;
+    private $role_id = 1;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $room_id;
+    private $room_id = -1;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
@@ -138,5 +138,26 @@ class User
         $this->rang = $rang;
 
         return $this;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return array(
+            'id' => $this->getId(),
+            'roomId' => $this->getRoomId(),
+            'roleId' => $this->getRoleId(),
+            'login' => $this->getLogin(),
+            'password' => $this->getPassword(),
+            'token' => $this->getToken(),
+            'money' => $this->getMoney(),
+            'rang' => $this->getRang()
+        );
     }
 }
