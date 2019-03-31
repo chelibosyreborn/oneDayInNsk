@@ -1,0 +1,182 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Евгений
+ * Date: 3/31/2019
+ * Time: 3:17 PM
+ */
+
+namespace App\Service;
+
+
+use App\Entity\User;
+
+class MainService {
+
+    private $roomService = null;
+    private $questService = null;
+    private $roleService = null;
+    private $wayService = null;
+    private $userService = null;
+
+    /**
+     * MainService constructor.
+     * @param RoleService $roleService
+     * @param WayService $wayService
+     * @param RoomService $roomService
+     * @param UserService $userService
+     */
+    public function __construct(QuestService $questService, RoleService $roleService, WayService $wayService, RoomService $roomService, UserService $userService)
+    {
+        $this->roomService = $roomService;
+        $this->questService = $questService;
+        $this->roleService = $roleService;
+        $this->wayService = $wayService;
+        $this->userService = $userService;
+    }
+
+    /**
+     * Вход в систему (логин)
+     * @param string $login логин пользователя
+     * @param string $password хеш-пароль
+     * @param int $rnd случайное число
+     * @return User|bool
+     */
+    public function login($login, $password, $rnd) {
+        if ($login && $password && $rnd) {
+            return $this->userService->login($login, $password, $rnd);
+        }
+        return false;
+    }
+
+    /**
+     * Выход из системы (логаут)
+     * @param string $token уникальный ключ активного пользователя
+     * @return bool
+     */
+    public function logout($token) {
+        if ($token) {
+            return $this->userService->logout($token);
+        }
+        return false;
+    }
+
+    /**
+     * Добавить пользователя
+     * @param string $login логин пользователя
+     * @param string $password пароль пользователя
+     * @return bool
+     */
+    public function addUser($login, $password) {
+        if ($login && $password) {
+            return $this->userService->addUser($login, $password);
+        }
+        return false;
+    }
+
+    /**
+     * Изменить количество денег игрока
+     * @param string $token
+     * @param int $money
+     * @return User|bool
+     */
+    public function setMoney($token, $money) {
+        if ($token && $money) {
+            return $this->userService->setMoney($token, $money);
+        }
+        return false;
+    }
+
+    /**
+     * Переместить игрока в другую комнату
+     * @param string $token
+     * @param int $roomToId
+     * @return User|bool
+     */
+    public function setRoom($token, $roomToId) {
+        if ($token && $roomToId) {
+            $user = $this->userService->getUser($token);
+            if ($user) {
+                // Найти комнату с идентификатором roomToId.
+                $room = $this->roomService->getRoom($roomToId);
+                if ($room) {
+                    // Проверить наличие пути между комнатой юзера и новой комнатой
+                    $isWayExists = $this->wayService->getWay($user->getRoomId(), $roomToId);
+                    // Переместить юзера в комнату
+                    if ($isWayExists) {
+                        $user->setRoomId($roomToId);
+                        $this->userService->saveUser($user);
+                        $user->setPassword('');
+                        return $user;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param string $token
+     * @param int $newRang
+     * @return User|bool|null
+     */
+    public function setRang($token, $newRang) {
+        if ($token && $newRang) {
+            return $this->userService->setRang($token, $newRang);
+        }
+        return false;
+    }
+
+    /**
+     * @param string $token
+     * @param int $roleId
+     * @return User|bool
+     */
+    public function setRole($token, $roleId) {
+        if ($token && $roleId) {
+            return $this->userService->setRole($token, $roleId);
+        }
+        return false;
+    }
+
+    /**
+     * Получить комнату по идентификатору
+     * @param int $id идентификатор комнаты
+     * @return \App\Entity\Room|bool|null
+     */
+    public function getRoom($id) {
+        if ($id) {
+            return $this->roomService->getRoom($id);
+        }
+        return false;
+    }
+
+    /**
+     * Получить все роли
+     * @return \App\Entity\Role[]
+     */
+    public function getRoles() {
+        return $this->roleService->getRoles();
+    }
+
+    /**
+     * Получить все задания для определенного игрока
+     * @param string $token токен игрока
+     * @return array|bool
+     */
+    public function getQuests($token) {
+        if ($token) {
+            $user = $this->userService->getUser($token);
+            if ($user) {
+                $quests = $this->questService->getQuestsByRoleId($user->getRoleId());
+                $result = [];
+                for ($i = 0; $i < count($quests); $i++) {
+                    $result[] = $quests[$i]->jsonSerialize();
+                }
+                return $result;
+            }
+        }
+        return false;
+    }
+
+}
