@@ -2,22 +2,22 @@
 
 namespace App\Controller;
 
-use App\Repository\UserRepository;
+use App\Service\MainService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
 {
-    private $userRepository = null;
+    private $service = null;
 
     /**
      * UserController constructor.
-     * @param UserRepository $userRepository
+     * @param MainService $service
      */
-    public function __construct(UserRepository $userRepository)
+    public function __construct(MainService $service)
     {
-        $this->userRepository = $userRepository;
+        $this->service = $service;
     }
 
     /**
@@ -28,11 +28,16 @@ class UserController extends AbstractController
      * @param int $rnd случайное число для формирования хеша
      * @return JsonResponse
      */
-    public function index(string $login, string $password, int $rnd): JsonResponse
-    {
-        $result = $this->userRepository->login($login, $password, $rnd);
+    public function index($login, $password, $rnd) {
+        $result = $this->service->login($login, $password, $rnd);
+        if ($result) {
+            return $this->json([
+                'status' => 'ok',
+                'data' => $result->jsonSerialize()
+            ]);
+        }
         return $this->json([
-            'status' => 'ok',
+            'status' => 'error',
             'data' => $result
         ]);
     }
@@ -43,9 +48,8 @@ class UserController extends AbstractController
      * @param $token
      * @return JsonResponse
      */
-    public function logout(string $token): JsonResponse
-    {
-        $result = $this->userRepository->logout($token);
+    public function logout($token) {
+        $result = $this->service->logout($token);
         return $this->json([
             'status' => 'ok',
             'data' => $result
@@ -59,9 +63,8 @@ class UserController extends AbstractController
      * @param string $password пароль пользователя
      * @return JsonResponse
      */
-    public function addUser(string $login, string $password): JsonResponse
-    {
-        $result = $this->userRepository->addUser($login, $password);
+    public function addUser($login, $password) {
+        $result = $this->service->addUser($login, $password);
         return $this->json([
            'status' => 'ok',
            'data' => $result
@@ -75,11 +78,16 @@ class UserController extends AbstractController
      * @param int $money количество денег
      * @return JsonResponse
      */
-    public function setMoney(string $token, int $money): JsonResponse
-    {
-        $result = $this->userRepository->setMoney($token, $money);
+    public function setMoney($token, $money) {
+        $result = $this->service->setMoney($token, $money);
+        if ($result) {
+            return $this->json([
+                'status' => 'ok',
+                'data' => $result->jsonSerialize()
+            ]);
+        }
         return $this->json([
-            'status' => 'ok',
+            'status' => 'error',
             'data' => $result
         ]);
     }
@@ -91,11 +99,16 @@ class UserController extends AbstractController
      * @param int $roomToId идентификатор комнаты, в которую нужно перейти
      * @return JsonResponse
      */
-    public function setRoom(string $token, int $roomToId): JsonResponse
-    {
-        $result = $this->userRepository->setRoom($token, $roomToId);
+    public function setRoom($token, $roomToId) {
+        $result = $this->service->setRoom($token, $roomToId);
+        if ($result) {
+            return $this->json([
+                'status' => 'ok',
+                'data' => $result->jsonSerialize()
+            ]);
+        }
         return $this->json([
-            'status' => 'ok',
+            'status' => 'error',
             'data' => $result
         ]);
     }
@@ -107,11 +120,16 @@ class UserController extends AbstractController
      * @param int $newRang новый ранг пользователя
      * @return JsonResponse
      */
-    public function setRang(string $token, int $newRang): JsonResponse
-    {
-        $result = $this->userRepository->setRang($token, $newRang);
+    public function setRang($token, $newRang) {
+        $result = $this->service->setRang($token, $newRang);
+        if ($result) {
+            return $this->json([
+                'status' => 'ok',
+                'data' => $result->jsonSerialize()
+            ]);
+        }
         return $this->json([
-            'status' => 'ok',
+            'status' => 'error',
             'data' => $result
         ]);
     }
@@ -123,11 +141,16 @@ class UserController extends AbstractController
      * @param int $roleId идентификатор роли
      * @return JsonResponse
      */
-    public function setRole(string $token, int $roleId): JsonResponse
-    {
-        $result = $this->userRepository->setRole($token, $roleId);
+    public function setRole($token, $roleId) {
+        $result = $this->service->setRole($token, $roleId);
+        if ($result) {
+            return $this->json([
+                'status' => 'ok',
+                'data' => $result->jsonSerialize()
+            ]);
+        }
         return $this->json([
-            'status' => 'ok',
+            'status' => 'error',
             'data' => $result
         ]);
     }
