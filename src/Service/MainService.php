@@ -179,4 +179,30 @@ class MainService {
         return false;
     }
 
+    public function finishQuest($token, $questId) {
+        if ($token && $questId) {
+            //взять юзера
+            $user = $this->userService->getUser($token);
+            if ($user) {
+                //взять квест
+                $quest = $this->questService->getQuest($questId);
+                //проверить квест
+                if ($quest) {
+                    //проверить, может ли этот юзер взять этот квест
+                    if ($user->getRoleId() === $quest->getRolesId()) {
+                        //Поменять прогресс выполнения квеста
+                        $userQuest = $this->questService->getUserQuest($questId, $user->getId());
+                        if ($userQuest) {
+                            $userQuest->setProgress("Выполнено");
+                            $this->questService->saveUserQuest($userQuest);
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
 }
