@@ -117,12 +117,11 @@ class MainService {
 
     /**
      * @param string $token
-     * @param int $newRang
      * @return User|bool|null
      */
-    public function setRang($token, $newRang) {
-        if ($token && $newRang) {
-            return $this->userService->setRang($token, $newRang);
+    public function setRang($token) {
+        if ($token) {
+            return $this->userService->setRang($token);
         }
         return false;
     }

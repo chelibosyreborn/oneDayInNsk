@@ -115,13 +115,12 @@ class UserController extends AbstractController
 
     /**
      * Изменить ранг пользователя
-     * @Route("api/user/setRang/{token}/{newRang}")
+     * @Route("api/user/setRang/{token}")
      * @param string $token уникальный ключ пользователя
-     * @param int $newRang новый ранг пользователя
      * @return JsonResponse
      */
-    public function setRang($token, $newRang) {
-        $result = $this->service->setRang($token, $newRang);
+    public function setRang($token) {
+        $result = $this->service->setRang($token);
         if ($result) {
             return $this->json([
                 'status' => 'ok',

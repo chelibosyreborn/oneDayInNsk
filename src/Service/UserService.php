@@ -12,7 +12,21 @@ namespace App\Service;
 use App\Entity\User;
 use App\Repository\UserRepository;
 
+
+
 class UserService {
+
+    const RANKS = array(
+        '1' => 100,
+        '2' => 200,
+        '3' => 300,
+        '4' => 400,
+        '5' => 500,
+        '6' => 600,
+        '7' => 700,
+        '8' => 800
+    );
+
     private $userRepository;
 
     /**
@@ -113,13 +127,13 @@ class UserService {
 
     /**
      * @param string $token
-     * @param int $newRang
      * @return User|bool|null
      */
-    public function setRang($token, $newRang) {
+    public function setRang($token) {
         $user = $this->userRepository->findOneBy(['token' => $token]);
-        if ($user && $newRang >= 0) {
-            $user->setRang($newRang);
+        if ($user && $user->getMoney() >= self::RANKS[$user->getRang() + 1]) {
+            $user->setMoney($user->getMoney() - self::RANKS[$user->getRang() + 1]);
+            $user->setRang($user->getRang() + 1);
             $this->userRepository->saveUser($user);
             $user->setPassword('');
             return $user;
