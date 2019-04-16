@@ -4,6 +4,9 @@ namespace App\Repository;
 
 use App\Entity\UsersQuests;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -18,4 +21,18 @@ class UsersQuestsRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, UsersQuests::class);
     }
+
+    public function save($userQuest) {
+        $entityManager = $this->getEntityManager();
+        try {
+            $entityManager->persist($userQuest);
+            $entityManager->flush();
+            return true;
+        } catch (OptimisticLockException $e) {}
+        catch (ORMException $e) {}
+        catch (UniqueConstraintViolationException $e) {}
+        return false;
+    }
+
+
 }
