@@ -11,7 +11,8 @@ namespace App\Service;
 
 use App\Entity\User;
 
-class MainService {
+class MainService
+{
 
     private $roomService = null;
     private $questService = null;
@@ -26,8 +27,7 @@ class MainService {
      * @param RoomService $roomService
      * @param UserService $userService
      */
-    public function __construct(QuestService $questService, RoleService $roleService, WayService $wayService, RoomService $roomService, UserService $userService)
-    {
+    public function __construct(QuestService $questService, RoleService $roleService, WayService $wayService, RoomService $roomService, UserService $userService) {
         $this->roomService = $roomService;
         $this->questService = $questService;
         $this->roleService = $roleService;
@@ -176,6 +176,32 @@ class MainService {
                 return $result;
             }
         }
+        return false;
+    }
+
+    public function finishQuest($token, $questId) {
+        if ($token && $questId) {
+            //взять юзера
+            $user = $this->userService->getUser($token);
+            if ($user) {
+                //взять квест
+                $quest = $this->questService->getQuest($questId);
+                //проверить квест
+                if ($quest) {
+                    //проверить, может ли этот юзер взять этот квест
+                    if ($user->getRoleId() === $quest->getRolesId()) {
+                        //Поменять прогресс выполнения квеста
+                        $userQuest = $this->questService->getUserQuest($questId, $user->getId());
+                        if ($userQuest) {
+                            $userQuest->setProgress("Выполнено");
+                            $this->questService->saveUserQuest($userQuest);
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
         return false;
     }
 

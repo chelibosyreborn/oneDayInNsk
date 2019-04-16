@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Repository\QuestRepository;
 use App\Service\MainService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,6 +20,7 @@ class QuestController extends AbstractController
         $this->service = $service;
     }
 
+
     /**
      * @Route("api/quest/{token}")
      * @param $token
@@ -33,4 +33,26 @@ class QuestController extends AbstractController
             'message' => $result
         ]);
     }
+
+    /**
+     * Изменить прогресс выполнения квеста
+     * @Route("api/quest/changeStatus/{token}/{questsId}")
+     * @param string $token токен игра
+     * @param $questsId
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function finishQuest($token, $questsId) {
+        $result = $this->service->finishQuest($token, $questsId);
+        if ($result) {
+            return $this->json([
+                'status' => 'ok',
+                'data' => $result
+            ]);
+        }
+        return $this->json([
+            'status' => 'error',
+            'data' => $result
+        ]);
+    }
+
 }
