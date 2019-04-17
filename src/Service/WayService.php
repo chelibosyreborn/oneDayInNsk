@@ -9,6 +9,7 @@
 namespace App\Service;
 
 
+use App\Entity\Way;
 use App\Repository\WayRepository;
 
 class WayService {
@@ -28,9 +29,10 @@ class WayService {
      * Получить путь между двумя комнатами
      * @param int $idFrom идентификатор исходной комнаты
      * @param int $idTo идентификатор входной комнаты
-     * @return \App\Entity\Way|null
+     * @return Way|null
      */
-    public function getWay($idFrom, $idTo) {
+    public function getWay(int $idFrom, int $idTo): Way
+    {
         return $this->wayRepository->findOneBy(['id_from' => $idFrom, 'id_to' => $idTo]);
     }
 

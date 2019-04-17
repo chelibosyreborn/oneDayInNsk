@@ -79,13 +79,13 @@ class UsersQuests
      * which is a value of any type other than a resource.
      * @since 5.4.0
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
-        return array(
+        return [
             'id' => $this->getId(),
             'users_id' => $this->getUsersId(),
             'quests_id' => $this->getQuestsId(),
             'progress' => $this->getProgress()
-        );
+        ];
     }
 }

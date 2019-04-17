@@ -13,13 +13,26 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 
 class UserService {
+
+    const RANKS = [
+        '1' => 100,
+        '2' => 200,
+        '3' => 300,
+        '4' => 400,
+        '5' => 500,
+        '6' => 600,
+        '7' => 700,
+        '8' => 800
+    ];
+
     private $userRepository;
 
     /**
      * UserService constructor.
      * @param $userRepository
      */
-    public function __construct(UserRepository $userRepository) {
+    public function __construct(UserRepository $userRepository)
+    {
         $this->userRepository = $userRepository;
     }
 
@@ -28,7 +41,8 @@ class UserService {
      * @param $token
      * @return User|null
      */
-    public function getUser($token) {
+    public function getUser(string $token): User
+    {
         return $this->userRepository->findOneBy(['token' => $token]);
     }
 
@@ -37,7 +51,8 @@ class UserService {
      * @param $user
      * @return bool
      */
-    public function saveUser($user) {
+    public function saveUser(User $user): bool
+    {
         return $this->userRepository->saveUser($user);
     }
 
@@ -48,7 +63,8 @@ class UserService {
      * @param int $rnd случайное число
      * @return User|bool
      */
-    public function login($login, $password, $rnd) {
+    public function login(string $login, string $password, int $rnd): User
+    {
         $user = $this->userRepository->findOneBy(['login' => $login]);
         if ($user) {
             $hash = md5($user->getPassword() . $rnd);
@@ -68,7 +84,8 @@ class UserService {
      * @param string $token уникальный ключ активного пользователя
      * @return bool
      */
-    public function logout($token) {
+    public function logout(string $token): bool
+    {
         $user = $this->userRepository->findOneBy(['token' => $token]);
         if ($user) {
             $user->setToken(null);
@@ -83,7 +100,8 @@ class UserService {
      * @param string $password пароль пользователя
      * @return bool
      */
-    public function addUser($login, $password) {
+    public function addUser(string $login, string $password): bool
+    {
         if ($login && $password) {
             $user = new User();
             $user->setLogin($login);
@@ -99,7 +117,8 @@ class UserService {
      * @param int $money
      * @return User|bool
      */
-    public function setMoney($token, $money) {
+    public function setMoney(string $token, int $money): object
+    {
         $user = $this->userRepository->findOneBy(['token' => $token]);
         if ($user) {
             $money = $money < 0 ? 0 : $money;
@@ -112,14 +131,14 @@ class UserService {
     }
 
     /**
-     * @param string $token
-     * @param int $newRang
+     * @param User $user
      * @return User|bool|null
      */
-    public function setRang($token, $newRang) {
-        $user = $this->userRepository->findOneBy(['token' => $token]);
-        if ($user && $newRang >= 0) {
-            $user->setRang($newRang);
+    public function setRang(User $user): object
+    {
+        if ($user->getMoney() >= self::RANKS[$user->getRang() + 1]) {
+            $user->setMoney($user->getMoney() - self::RANKS[$user->getRang() + 1]);
+            $user->setRang($user->getRang() + 1);
             $this->userRepository->saveUser($user);
             $user->setPassword('');
             return $user;
@@ -132,7 +151,8 @@ class UserService {
      * @param int $roleId
      * @return User|bool
      */
-    public function setRole($token, $roleId) {
+    public function setRole(string $token, int $roleId): object
+    {
         $user = $this->userRepository->findOneBy(['token' => $token]);
         if ($user && $roleId > 0) {
             $user->setRoleId($roleId);

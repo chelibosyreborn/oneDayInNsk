@@ -9,6 +9,7 @@
 namespace App\Service;
 
 
+use App\Entity\Room;
 use App\Repository\RoomRepository;
 
 class RoomService {
@@ -19,16 +20,18 @@ class RoomService {
      * RoomService constructor.
      * @param RoomRepository $roomRepository
      */
-    public function __construct(RoomRepository $roomRepository) {
+    public function __construct(RoomRepository $roomRepository)
+    {
         $this->roomRepository = $roomRepository;
     }
 
     /**
      * Получить комнату по идентификатору
      * @param int $id идентификатор комнаты
-     * @return \App\Entity\Room|null
+     * @return Room|null
      */
-    public function getRoom($id) {
+    public function getRoom($id): Room
+    {
         return $this->roomRepository->find($id);
     }
 

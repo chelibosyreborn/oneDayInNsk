@@ -96,14 +96,14 @@ class Quest
      * which is a value of any type other than a resource.
      * @since 5.4.0
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
-        return array(
+        return [
             'id' => $this->getId(),
             'roles_id' => $this->getRolesId(),
             'name' => $this->getName(),
             'description' => $this->getDescription(),
             'reward' => $this->getReward()
-        );
+        ];
     }
 }

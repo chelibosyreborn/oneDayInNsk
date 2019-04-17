@@ -28,7 +28,8 @@ class UserController extends AbstractController
      * @param int $rnd случайное число для формирования хеша
      * @return JsonResponse
      */
-    public function index($login, $password, $rnd) {
+    public function index(string $login, string $password, int $rnd): JsonResponse
+    {
         $result = $this->service->login($login, $password, $rnd);
         if ($result) {
             return $this->json([
@@ -48,7 +49,8 @@ class UserController extends AbstractController
      * @param $token
      * @return JsonResponse
      */
-    public function logout($token) {
+    public function logout(string $token): JsonResponse
+    {
         $result = $this->service->logout($token);
         return $this->json([
             'status' => 'ok',
@@ -63,7 +65,8 @@ class UserController extends AbstractController
      * @param string $password пароль пользователя
      * @return JsonResponse
      */
-    public function addUser($login, $password) {
+    public function addUser(string $login, string $password): JsonResponse
+    {
         $result = $this->service->addUser($login, $password);
         return $this->json([
            'status' => 'ok',
@@ -78,7 +81,8 @@ class UserController extends AbstractController
      * @param int $money количество денег
      * @return JsonResponse
      */
-    public function setMoney($token, $money) {
+    public function setMoney(string $token, int $money): JsonResponse
+    {
         $result = $this->service->setMoney($token, $money);
         if ($result) {
             return $this->json([
@@ -99,7 +103,8 @@ class UserController extends AbstractController
      * @param int $roomToId идентификатор комнаты, в которую нужно перейти
      * @return JsonResponse
      */
-    public function setRoom($token, $roomToId) {
+    public function setRoom(string $token, int $roomToId): JsonResponse
+    {
         $result = $this->service->setRoom($token, $roomToId);
         if ($result) {
             return $this->json([
@@ -115,13 +120,13 @@ class UserController extends AbstractController
 
     /**
      * Изменить ранг пользователя
-     * @Route("api/user/setRang/{token}/{newRang}")
+     * @Route("api/user/setRang/{token}")
      * @param string $token уникальный ключ пользователя
-     * @param int $newRang новый ранг пользователя
      * @return JsonResponse
      */
-    public function setRang($token, $newRang) {
-        $result = $this->service->setRang($token, $newRang);
+    public function setRang(string $token): JsonResponse
+    {
+        $result = $this->service->setRang($token);
         if ($result) {
             return $this->json([
                 'status' => 'ok',
@@ -141,7 +146,8 @@ class UserController extends AbstractController
      * @param int $roleId идентификатор роли
      * @return JsonResponse
      */
-    public function setRole($token, $roleId) {
+    public function setRole(string $token, int $roleId): JsonResponse
+    {
         $result = $this->service->setRole($token, $roleId);
         if ($result) {
             return $this->json([

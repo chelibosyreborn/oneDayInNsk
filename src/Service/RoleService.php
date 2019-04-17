@@ -9,6 +9,7 @@
 namespace App\Service;
 
 
+use App\Entity\Role;
 use App\Repository\RoleRepository;
 
 class RoleService {
@@ -19,15 +20,17 @@ class RoleService {
      * RoleService constructor.
      * @param RoleRepository $roleRepository
      */
-    public function __construct(RoleRepository $roleRepository) {
+    public function __construct(RoleRepository $roleRepository)
+    {
         $this->roleRepository = $roleRepository;
     }
 
     /**
      * Получить все роли
-     * @return \App\Entity\Role[]
+     * @return Role[]
      */
-    public function getRoles() {
+    public function getRoles(): array
+    {
         return $this->roleRepository->findAll();
     }
 

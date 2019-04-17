@@ -27,7 +27,8 @@ class UserRepository extends ServiceEntityRepository
      * @param User $user измененный пользователь
      * @return bool результат сохранения
      */
-    public function saveUser($user) {
+    public function saveUser(User $user): bool
+    {
         $entityManager = $this->getEntityManager();
         try {
             $entityManager->persist($user);
