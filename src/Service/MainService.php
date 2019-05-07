@@ -20,6 +20,7 @@ class MainService {
     private $roleService = null;
     private $wayService = null;
     private $userService = null;
+    private $changeRoomGame = null;
 
     /**
      * MainService constructor.
@@ -29,13 +30,14 @@ class MainService {
      * @param RoomService $roomService
      * @param UserService $userService
      */
-    public function __construct(QuestService $questService, RoleService $roleService, WayService $wayService, RoomService $roomService, UserService $userService)
+    public function __construct(QuestService $questService, RoleService $roleService, WayService $wayService, RoomService $roomService, UserService $userService, ChangeRoomGame $changeRoomGame)
     {
         $this->roomService = $roomService;
         $this->questService = $questService;
         $this->roleService = $roleService;
         $this->wayService = $wayService;
         $this->userService = $userService;
+        $this->changeRoomGame = $changeRoomGame;
     }
 
     /**
@@ -100,7 +102,7 @@ class MainService {
      * @param int $roomToId
      * @return User|bool
      */
-    public function setRoom(string $token, int $roomToId): object
+    public function getRoomChangePhrase(string $token, int $roomToId): object
     {
         if ($token && $roomToId) {
             $user = $this->userService->getUser($token);
@@ -112,15 +114,29 @@ class MainService {
                     $isWayExists = $this->wayService->getWay($user->getRoomId(), $roomToId);
                     // Переместить юзера в комнату
                     if ($isWayExists) {
-                        $user->setRoomId($roomToId);
+                        /*$user->setRoomId($roomToId);
                         $this->userService->saveUser($user);
                         $user->setPassword('');
-                        return $user;
+                        return user;*/
+                        $answer[] = $this->changeRoomGame->randomPhrase();
+                        return $answer->phrase;
                     }
                 }
             }
         }
         return false;
+    }
+
+    //$this->changeRoomGame->phraseMatch( $phrase, $answer->index );
+
+    private function setRoom(string $user, int $roomToId, string $phrase): object {
+
+
+
+        $user->setRoomId($roomToId);
+        $this->userService->saveUser($user);
+        $user->setPassword('');
+        return user;
     }
 
     /**
